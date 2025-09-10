@@ -9,6 +9,6 @@ export interface ICoachingUser {
   name: string;
   email: string;
   status: StatusType;
-  date: Date;
+  date: string;
   time: ITimeSlot[];
 }

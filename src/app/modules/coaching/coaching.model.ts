@@ -1,5 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
 import { ICoachingUser } from './coaching.interface';
+import { string } from 'zod';
 
 const TimeSlotSchema = new Schema(
   {
@@ -18,7 +19,7 @@ const UserSchema = new Schema<ICoachingUser>(
       enum: ['PENDING', 'APPROVED', 'DENIED'],
       default: 'PENDING',
     },
-    date: { type: Date, required: true },
+    date: { type: String, required: true },
     time: { type: [TimeSlotSchema], required: true },
   },
   { timestamps: true }
