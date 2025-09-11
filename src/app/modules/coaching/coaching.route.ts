@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post(
   '/',
-  //   auth(USER_ROLES.USER),
+  auth(USER_ROLES.USER),
   CoachingControllers.createUserController
 );
 router.put(
@@ -24,6 +24,12 @@ router.get(
   '/',
   auth(USER_ROLES.SUPER_ADMIN),
   CoachingControllers.getUsersController
+);
+
+router.get(
+  '/:id',
+  auth(USER_ROLES.SUPER_ADMIN),
+  CoachingControllers.getUsersControllerById
 );
 router.put(
   '/:id',

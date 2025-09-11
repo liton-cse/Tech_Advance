@@ -14,6 +14,7 @@ const quizSchema = new Schema<IQuiz, QuizModal>(
         text: { type: String, required: true },
         score: { type: Number, required: true },
       },
+      { _id: false },
     ],
   },
   { timestamps: true }

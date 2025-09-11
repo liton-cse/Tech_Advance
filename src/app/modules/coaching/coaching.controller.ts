@@ -21,16 +21,16 @@ const createUserController = catchAsync(
   }
 );
 
-// Read All search..
+// Read All search..like name,pending,approved,denied.
 // @apiend point:api/v1/coaching/search?q=
 // @method:get
 const getAllUsersSearchController = catchAsync(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const { q } = req.query;
     if (!q || typeof q !== 'string') {
       throw new ApiError(400, 'Search term (q) is required');
     }
-    const result = await CoachingService.getAllCoachingUsers(q);
+    const result = await CoachingService.getAllSearchCoachingUsers(q);
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.OK,
@@ -40,58 +40,75 @@ const getAllUsersSearchController = catchAsync(
   }
 );
 
-// Read all coaching
+// Read all coaching user
 // @apiend point:api/v1/coaching
 // @method:get
-const getUsersController = catchAsync(async (req: Request, res: Response) => {
-  const result = await CoachingService.getUser();
-  sendResponse(res, {
-    success: true,
-    statusCode: StatusCodes.OK,
-    message: 'User fetched successfully',
-    data: result,
-  });
-});
+const getUsersController = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await CoachingService.getUser();
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'User fetched successfully',
+      data: result,
+    });
+  }
+);
 
-// Update
+// Read coaching user by Id..
+// @apiend point:api/v1/coaching
+// @method:get
+const getUsersControllerById = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await CoachingService.getUserById(req.params.id);
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'User fetched successfully',
+      data: result,
+    });
+  }
+);
+// Update any coaching user
 // @apiend point:api/v1/coaching/:id
 // @method:put
-const updateUserController = catchAsync(async (req: Request, res: Response) => {
-  const result = await CoachingService.updateCoachingUser(
-    req.params.id,
-    req.body
-  );
-  sendResponse(res, {
-    success: true,
-    statusCode: StatusCodes.OK,
-    message: 'User updated successfully',
-    data: result,
-  });
-});
+const updateUserController = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await CoachingService.updateCoachingUser(
+      req.params.id,
+      req.body
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'User updated successfully',
+      data: result,
+    });
+  }
+);
 
 // @apiend point:api/v1/coaching/:id
 // @method:delete
-const deleteUserController = catchAsync(async (req: Request, res: Response) => {
-  const result = await CoachingService.deleteCoachingUser(req.params.id);
-  sendResponse(res, {
-    success: true,
-    statusCode: StatusCodes.OK,
-    message: 'User deleted successfully',
-    data: result,
-  });
-});
+const deleteUserController = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await CoachingService.deleteCoachingUser(req.params.id);
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'User deleted successfully',
+      data: result,
+    });
+  }
+);
 
 // Approve/Deny Slot
 // @apiend point:api/v1/coaching/status/:id.
 // @method:put
 const updateSlotStatusController = catchAsync(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const { range, action } = req.body;
     let { id } = req.params;
-    // 🔑 Sanitize the ID
     id = id.trim();
-
-    // 🔑 Validate before querying
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
@@ -115,4 +132,5 @@ export const CoachingControllers = {
   updateUserController,
   deleteUserController,
   updateSlotStatusController,
+  getUsersControllerById,
 };
