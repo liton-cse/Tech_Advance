@@ -5,6 +5,8 @@ import { NotificationRoutes } from '../app/modules/notification/notification.rou
 import { QuizRoutes } from '../app/modules/discover.strength.quiz/quiz.route';
 import { VideoRouter } from '../app/modules/discover.strength.videos/videos.route';
 import { CoachingRoutes } from '../app/modules/coaching/coaching.route';
+import { CommunityRoutes } from '../app/modules/community/community.route';
+
 const router = express.Router();
 
 const apiRoutes = [
@@ -27,6 +29,10 @@ const apiRoutes = [
   {
     path: '/coaching',
     route: CoachingRoutes,
+  },
+  {
+    path: '/groups',
+    route: CommunityRoutes,
   },
   {
     path: '/notification',
