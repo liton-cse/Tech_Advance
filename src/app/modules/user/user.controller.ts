@@ -69,7 +69,6 @@ const updateProfile = catchAsync(
       ...req.body,
     };
     const result = await UserService.updateProfileToDB(user, data);
-
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.OK,
@@ -128,6 +127,46 @@ const filterUsers = catchAsync(
   }
 );
 
+// @apiend point:api/v1/user/block/:id
+// @method:patch
+const blockUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await UserService.blockUser(req.params.id);
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Users fetched successfully',
+      data: user,
+    });
+  }
+);
+// @apiend point:api/v1/user/unblock/:id
+// @method:patch
+const unblockUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await UserService.unblockUser(req.params.id);
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Users fetched successfully',
+      data: user,
+    });
+  }
+);
+// @apiend point:api/v1/user/blocked
+// @method:get
+const getBlockedUsers = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const users = await UserService.getBlockedUsers();
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Blocked Users fetched successfully',
+      data: users,
+    });
+  }
+);
+
 export const UserController = {
   createUser,
   getUserProfile,
@@ -136,4 +175,7 @@ export const UserController = {
   searchUsers,
   filterUsers,
   getAllUserProfile,
+  blockUser,
+  unblockUser,
+  getBlockedUsers,
 };

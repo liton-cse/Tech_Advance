@@ -85,7 +85,24 @@ const updateSlotStatus = async (
   await user.save();
   return user;
 };
+// @get total coaching user.
+const getTotalCoachingUsers = async () => {
+  return await CoachingUserModel.countDocuments();
+};
 
+// @get total approved coaching user.
+const getTotalApprovedCoachingUsers = async () => {
+  return await CoachingUserModel.countDocuments({
+    status: { $in: ['APPROVED'] },
+  });
+};
+
+// @get total denied coaching user.
+const getTotalDeniedCoachingUsers = async () => {
+  return await CoachingUserModel.countDocuments({
+    status: { $in: ['DENIED'] },
+  });
+};
 export const CoachingService = {
   createCoachingUser,
   getAllSearchCoachingUsers,
@@ -94,4 +111,7 @@ export const CoachingService = {
   updateSlotStatus,
   getUser,
   getUserById,
+  getTotalCoachingUsers,
+  getTotalApprovedCoachingUsers,
+  getTotalDeniedCoachingUsers,
 };

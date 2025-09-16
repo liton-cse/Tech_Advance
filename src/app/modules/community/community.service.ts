@@ -156,7 +156,6 @@ export const editReply = async (
 
   const reply = comment.replies.find(r => r._id.toString() === replyId);
   if (!reply) throw new Error('Reply not found');
-
   if (data.text) reply.text = data.text;
   if (data.image) reply.image = data.image;
 

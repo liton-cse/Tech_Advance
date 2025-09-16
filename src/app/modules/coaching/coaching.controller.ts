@@ -125,6 +125,47 @@ const updateSlotStatusController = catchAsync(
   }
 );
 
+// @API Endpoint: api/v1/coaching/total-user
+// @Method: GET
+const totalCoachingUsers = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const count = await CoachingService.getTotalCoachingUsers();
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: `Total user are ${count}`,
+      data: count,
+    });
+  }
+);
+// @API Endpoint: api/v1/coaching/approved/total-user
+// @Method: GET
+const totalApprovedCoachingUsers = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const count = await CoachingService.getTotalApprovedCoachingUsers();
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: `Total user are ${count}`,
+      data: count,
+    });
+  }
+);
+
+// @API Endpoint: api/v1/coaching/approved/total-user
+// @Method: GET
+const totalDeniedCoachingUsers = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const count = await CoachingService.getTotalDeniedCoachingUsers();
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: `Total user are ${count}`,
+      data: count,
+    });
+  }
+);
+
 export const CoachingControllers = {
   createUserController,
   getAllUsersSearchController,
@@ -133,4 +174,7 @@ export const CoachingControllers = {
   deleteUserController,
   updateSlotStatusController,
   getUsersControllerById,
+  totalCoachingUsers,
+  totalApprovedCoachingUsers,
+  totalDeniedCoachingUsers,
 };

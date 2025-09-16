@@ -44,4 +44,20 @@ router
 
 router.route('/all').get(UserController.getAllUserProfile);
 
+router.patch(
+  '/block/:id',
+  auth(USER_ROLES.SUPER_ADMIN),
+  UserController.blockUser
+);
+router.patch(
+  '/unblock/:id',
+  auth(USER_ROLES.SUPER_ADMIN),
+  UserController.unblockUser
+);
+router.get(
+  '/blocked',
+  auth(USER_ROLES.SUPER_ADMIN),
+  UserController.getBlockedUsers
+);
+
 export const UserRoutes = router;

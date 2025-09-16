@@ -53,7 +53,7 @@ const getUserProfileFromDB = async (
   return isExistUser;
 };
 
-export const getAllUsersFromDB = async (
+const getAllUsersFromDB = async (
   paginationOptions: IPaginationOptions
 ): Promise<{ meta: any; data: Partial<IUser>[] }> => {
   const { skip, limit, sortBy, sortOrder, page } =
@@ -109,6 +109,17 @@ const filterUsersByDateFromDB = async (
   });
 };
 
+const blockUser = async (id: string) => {
+  return await User.blockUser(id);
+};
+
+const unblockUser = async (id: string) => {
+  return await User.unblockUser(id);
+};
+const getBlockedUsers = async () => {
+  return await User.find({ userStatus: 'blocked' });
+};
+
 export const UserService = {
   createUserToDB,
   getUserProfileFromDB,
@@ -117,4 +128,7 @@ export const UserService = {
   searchUsersToDB,
   filterUsersByDateFromDB,
   getAllUsersFromDB,
+  blockUser,
+  unblockUser,
+  getBlockedUsers,
 };

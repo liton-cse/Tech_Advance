@@ -27,6 +27,24 @@ router.get(
 );
 
 router.get(
+  '/total-users',
+  auth(USER_ROLES.SUPER_ADMIN),
+  CoachingControllers.totalCoachingUsers
+);
+
+router.get(
+  '/approved/total-users',
+  auth(USER_ROLES.SUPER_ADMIN),
+  CoachingControllers.totalApprovedCoachingUsers
+);
+
+router.get(
+  '/denied/total-users',
+  auth(USER_ROLES.SUPER_ADMIN),
+  CoachingControllers.totalDeniedCoachingUsers
+);
+
+router.get(
   '/:id',
   auth(USER_ROLES.SUPER_ADMIN),
   CoachingControllers.getUsersControllerById

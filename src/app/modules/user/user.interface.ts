@@ -9,7 +9,8 @@ export type IUser = {
   password: string;
   location: string;
   image?: string;
-  status: 'active' | 'delete';
+  userStatus: 'active' | 'blocked';
+  status: 'active' | 'inactive';
   verified: boolean;
   authentication?: {
     isResetPassword: boolean;
@@ -22,4 +23,6 @@ export type UserModal = {
   isExistUserById(id: string): any;
   isExistUserByEmail(email: string): any;
   isMatchPassword(password: string, hashPassword: string): boolean;
+  blockUser(id: string): Promise<IUser | null>;
+  unblockUser(id: string): Promise<IUser | null>;
 } & Model<IUser>;

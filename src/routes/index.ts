@@ -6,6 +6,10 @@ import { QuizRoutes } from '../app/modules/discover.strength.quiz/quiz.route';
 import { VideoRouter } from '../app/modules/discover.strength.videos/videos.route';
 import { CoachingRoutes } from '../app/modules/coaching/coaching.route';
 import { CommunityRoutes } from '../app/modules/community/community.route';
+import { DashboardRoute } from '../app/modules/dashboard/dashboard.route';
+import { SamllBusinessRoute } from '../app/modules/small.business/small.business.route';
+import { BusinessPlanRoutes } from '../app/modules/business.plan/business.plan.route';
+import { SuccessPathRoutes } from '../app/modules/success.path/success.path.route';
 
 const router = express.Router();
 
@@ -17,6 +21,22 @@ const apiRoutes = [
   {
     path: '/auth',
     route: AuthRoutes,
+  },
+  {
+    path: '/dashboard',
+    route: DashboardRoute,
+  },
+  {
+    path: '/small/business',
+    route: SamllBusinessRoute,
+  },
+  {
+    path: '/business/plan',
+    route: BusinessPlanRoutes,
+  },
+  {
+    path: '/success/path',
+    route: SuccessPathRoutes,
   },
   {
     path: '/quiz',

@@ -33,9 +33,14 @@ const userSchema = new Schema<IUser, UserModal>(
       type: String,
       default: 'https://i.ibb.co/z5YHLV9/profile.png',
     },
+    userStatus: {
+      type: String,
+      enum: ['active', 'unblock'],
+      default: 'active',
+    },
     status: {
       type: String,
-      enum: ['active', 'delete'],
+      enum: ['active', 'inacive'],
       default: 'active',
     },
     verified: {
@@ -97,5 +102,15 @@ userSchema.pre('save', async function (next) {
   );
   next();
 });
+
+// Static method: block user
+userSchema.statics.blockUser = async function (id: string) {
+  return this.findByIdAndUpdate(id, { userStatus: 'blocked' }, { new: true });
+};
+
+// Static method: unblock user
+userSchema.statics.unblockUser = async function (id: string) {
+  return this.findByIdAndUpdate(id, { userStatus: 'active' }, { new: true });
+};
 
 export const User = model<IUser, UserModal>('User', userSchema);
