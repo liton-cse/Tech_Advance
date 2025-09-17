@@ -2,8 +2,8 @@ import express from 'express';
 import { AuthRoutes } from '../app/modules/auth/auth.route';
 import { UserRoutes } from '../app/modules/user/user.route';
 import { NotificationRoutes } from '../app/modules/notification/notification.routes';
-import { QuizRoutes } from '../app/modules/discover.strength.quiz/quiz.route';
-import { VideoRouter } from '../app/modules/discover.strength.videos/videos.route';
+import { MockInterviewRoutes } from '../app/modules/mock.interview/quiz.route';
+import { BootcampRouter } from '../app/modules/bootCampVideo/videos.route';
 import { CoachingRoutes } from '../app/modules/coaching/coaching.route';
 import { CommunityRoutes } from '../app/modules/community/community.route';
 import { DashboardRoute } from '../app/modules/dashboard/dashboard.route';
@@ -39,12 +39,12 @@ const apiRoutes = [
     route: SuccessPathRoutes,
   },
   {
-    path: '/quiz',
-    route: QuizRoutes,
+    path: '/mock/interview',
+    route: MockInterviewRoutes,
   },
   {
-    path: '/video',
-    route: VideoRouter,
+    path: '/bootcamp',
+    route: BootcampRouter,
   },
   {
     path: '/coaching',

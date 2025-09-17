@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 export interface IVideo {
   title?: string | '';
   filename?: string | '';
@@ -13,3 +13,10 @@ export interface IVideo {
 export type VideoModal = {
   isExistVideoById(id: string): any;
 } & Model<IVideo>;
+
+export interface IPlaylist extends Document {
+  title: string;
+  videos?: Types.ObjectId[] | IVideo[];
+  createdAt?: Date;
+  updatedAt?: Date;
+}

@@ -10,6 +10,10 @@ export interface IQuiz {
   createdAt?: Date;
   updatedAt?: Date;
 }
+export interface IAssessment extends Document {
+  range: string;
+  recomandedText: string;
+}
 
 export type QuizModal = {
   isExistQuizById(id: string): any;

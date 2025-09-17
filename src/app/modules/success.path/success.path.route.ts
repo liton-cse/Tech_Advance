@@ -40,4 +40,33 @@ router.delete(
   SuccessPathController.deleteQuizQuestion
 );
 
+/**
+ * Assessment.
+ */
+router.post(
+  '/assessments/:categoryName',
+  auth(USER_ROLES.SUPER_ADMIN),
+  SuccessPathController.addAssessment
+); // Create
+router.get(
+  '/assessments',
+  auth(USER_ROLES.SUPER_ADMIN),
+  SuccessPathController.getAllAssessmentCategories
+); // Read all
+router.get(
+  '/assessments/:categoryName',
+  auth(USER_ROLES.SUPER_ADMIN),
+  SuccessPathController.getAssessmentCategoryByName
+); // Read one
+router.put(
+  '/assessments/:categoryName/:assessmentId',
+  auth(USER_ROLES.SUPER_ADMIN),
+  SuccessPathController.updateAssessment
+); // Update
+router.delete(
+  '/assessments/:categoryName/:assessmentId',
+  auth(USER_ROLES.SUPER_ADMIN),
+  SuccessPathController.deleteAssessment
+); // Delete
+
 export const SuccessPathRoutes = router;
