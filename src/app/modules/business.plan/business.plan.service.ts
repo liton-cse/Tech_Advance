@@ -1,5 +1,9 @@
-import { QuestionModel, QuizModel } from './business.plan.model';
-import { IQuestion, IQuiz } from './business.plan.interface';
+import {
+  QuestionModel,
+  QuizModel,
+  UserResponseModel,
+} from './business.plan.model';
+import { IQuestion, IQuiz, IUserResponse } from './business.plan.interface';
 
 const createQuiz = async (payload: IQuiz): Promise<IQuiz> => {
   const result = await QuizModel.create(payload);
@@ -54,6 +58,30 @@ const updateQuestion = async (
 
 const deleteQuestion = async (id: string): Promise<IQuestion | null> => {
   return await QuestionModel.findByIdAndDelete(id);
+};
+
+//Submitted data for generating pdf....
+const submittedDataforPdf = async ({
+  userId,
+  quizAnswers,
+  writtenAnswers,
+}: IUserResponse): Promise<IUserResponse> => {
+  try {
+    // Save user responses
+    const response = await UserResponseModel.create({
+      userId,
+      quizAnswers,
+      writtenAnswers,
+    });
+
+    return response;
+  } catch (error) {
+    throw new Error('Error saving responses: ' + error);
+  }
+};
+
+export const UserResponseService = {
+  submittedDataforPdf,
 };
 
 export const QuestionService = {

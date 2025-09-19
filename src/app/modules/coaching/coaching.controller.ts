@@ -166,6 +166,167 @@ const totalDeniedCoachingUsers = catchAsync(
   }
 );
 
+//---------Caoch Section---------
+// Create coach
+export const createCoach = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { name, description } = req.body;
+    const coach = await CoachingService.createCoach(name, description);
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.CREATED,
+      message: 'Coach created successfully',
+      data: coach,
+    });
+  }
+);
+
+// Update coach
+export const updateCoach = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const coach = await CoachingService.updateCoach(req.params.id, req.body);
+
+    sendResponse(res, {
+      success: !!coach,
+      statusCode: coach ? StatusCodes.OK : StatusCodes.NOT_FOUND,
+      message: coach ? 'Coach updated successfully' : 'Coach not found',
+      data: coach ?? null,
+    });
+  }
+);
+
+// Delete coach
+export const deleteCoach = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const coach = await CoachingService.deleteCoach(req.params.id);
+    sendResponse(res, {
+      success: !!coach,
+      statusCode: coach ? StatusCodes.OK : StatusCodes.NOT_FOUND,
+      message: coach ? 'Coach deleted successfully' : 'Coach not found',
+      data: coach,
+    });
+  }
+);
+
+// Get all coaches
+export const getAllCoaches = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const coaches = await CoachingService.getAllCoaches();
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'All coaches retrieved successfully',
+      data: coaches,
+    });
+  }
+);
+
+// Get coach by ID
+export const getCoachById = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const coach = await CoachingService.getCoachById(req.params.id);
+    sendResponse(res, {
+      success: !!coach,
+      statusCode: coach ? StatusCodes.OK : StatusCodes.NOT_FOUND,
+      message: coach ? 'Coach retrieved successfully' : 'Coach not found',
+      data: coach ?? null,
+    });
+  }
+);
+
+// Add date (with default slots)
+export const addDate = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { date } = req.body;
+    console.log(date);
+    const coach = await CoachingService.addDateWithDefaultSlots(
+      req.params.id,
+      date
+    );
+    console.log(coach);
+    sendResponse(res, {
+      success: !!coach,
+      statusCode: coach ? StatusCodes.OK : StatusCodes.NOT_FOUND,
+      message: coach ? 'Date added successfully' : 'Coach not found',
+      data: coach ?? null,
+    });
+  }
+);
+
+// Update slot
+export const updateSlot = catchAsync(async (req: Request, res: Response) => {
+  const { date, updates } = req.body;
+  const coach = await CoachingService.updateSlot(req.params.id, date, updates);
+
+  sendResponse(res, {
+    success: !!coach,
+    statusCode: coach ? StatusCodes.OK : StatusCodes.NOT_FOUND,
+    message: coach ? 'Slot updated successfully' : 'Coach or date not found',
+    data: coach,
+  });
+});
+
+export const deleteSlot = catchAsync(async (req, res) => {
+  const { date, slotKey } = req.body; // { date: "18-09-2025", slotKey: "slot2" }
+  const coach = await CoachingService.deleteSlot(req.params.id, date, slotKey);
+
+  sendResponse(res, {
+    success: !!coach,
+    statusCode: coach ? StatusCodes.OK : StatusCodes.NOT_FOUND,
+    message: coach ? 'Slot deleted successfully' : 'Coach or slot not found',
+    data: coach,
+  });
+});
+
+// Get slots by date
+// @route GET /api/v1/coaching/coach/:id/slots?date=18-09-2025
+export const getSlotsByDate = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { date } = req.query as { date: string };
+    const slots = await CoachingService.getSlotsByDate(req.params.id, date);
+    sendResponse(res, {
+      success: !!slots,
+      statusCode: slots ? StatusCodes.OK : StatusCodes.NOT_FOUND,
+      message: slots
+        ? 'Slots retrieved successfully'
+        : 'Slots not found for this date',
+      data: slots ?? null,
+    });
+  }
+);
+// toggle the flag...
+const toggleSlotFlagController = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { date, slotKey } = req.body;
+      const { coachId } = req.params;
+
+      if (!coachId || !date || !slotKey) {
+        return res
+          .status(400)
+          .json({ error: 'coachId, date, and slotKey are required' });
+      }
+
+      const updatedCoach = await CoachingService.toggleSlotFlag(
+        coachId,
+        date,
+        slotKey
+      );
+
+      sendResponse(res, {
+        success: !!updatedCoach,
+        statusCode: updatedCoach ? StatusCodes.OK : StatusCodes.NOT_FOUND,
+        message: updatedCoach
+          ? 'Slot Bock retrieved successfully'
+          : 'Slots  not found for this date',
+        data: updatedCoach ?? null,
+      });
+    } catch (err: any) {
+      next(err);
+    }
+  }
+);
+
 export const CoachingControllers = {
   createUserController,
   getAllUsersSearchController,
@@ -177,4 +338,15 @@ export const CoachingControllers = {
   totalCoachingUsers,
   totalApprovedCoachingUsers,
   totalDeniedCoachingUsers,
+  //---Coach----
+  createCoach,
+  updateCoach,
+  deleteCoach,
+  getAllCoaches,
+  getCoachById,
+  addDate,
+  updateSlot,
+  deleteSlot,
+  getSlotsByDate,
+  toggleSlotFlagController,
 };

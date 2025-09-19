@@ -111,6 +111,39 @@ const deleteAssessment = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+//--------Get Assessment base on the range-----
+const getAssessmentByRangeMockInterview = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { value } = req.query; // e.g. ?value=11
+    if (!value) {
+      return sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: 'Query param "value" is required',
+      });
+    }
+
+    const assessment = await MockInterviewService.getAssessmentByRange(
+      Number(value)
+    );
+
+    sendResponse(res, {
+      success: !!assessment,
+      statusCode: assessment ? StatusCodes.OK : StatusCodes.NOT_FOUND,
+      message: assessment
+        ? 'Assessment retrieved successfully'
+        : 'No assessment found for this value',
+      data: assessment,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const MockInterviewController = {
   createQuiz,
   getQuizzes,
@@ -122,4 +155,5 @@ export const MockInterviewController = {
   getAssessmentById,
   updateAssessment,
   deleteAssessment,
+  getAssessmentByRangeMockInterview,
 };

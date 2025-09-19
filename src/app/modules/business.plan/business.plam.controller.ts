@@ -1,9 +1,13 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import { StatusCodes } from 'http-status-codes';
-import { IQuestion, IQuiz } from './business.plan.interface';
-import { QuestionService, QuizService } from './business.plan.service';
+import { IQuestion, IQuiz, IUserResponse } from './business.plan.interface';
+import {
+  QuestionService,
+  QuizService,
+  UserResponseService,
+} from './business.plan.service';
 
 const createQuiz = catchAsync(async (req: Request, res: Response) => {
   const payload: IQuiz = req.body;
@@ -124,6 +128,33 @@ const deleteQuestion = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+// Generating pdf base on the answer...
+
+export const BusinessPlanPdf = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const response = await UserResponseService.submittedDataforPdf({
+        userId: (req as any).user.id,
+        quizAnswers: req.body.quizAnswers,
+        writtenAnswers: req.body.writtenAnswers,
+      } as IUserResponse);
+
+      sendResponse(res, {
+        success: true,
+        statusCode: StatusCodes.OK,
+        message: 'Response Saved successfully',
+        data: response,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+export const BusinessPlanController = {
+  BusinessPlanPdf,
+};
 
 export const QuestionController = {
   addQuestion,

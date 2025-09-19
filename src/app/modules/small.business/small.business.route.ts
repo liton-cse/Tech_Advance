@@ -36,6 +36,13 @@ router.delete(
 );
 
 // @assesment route.
+//-----------Get Assessment by range-------
+// GET /api/assessments/range?value=11
+router.get(
+  '/assessments/by-range',
+  auth(USER_ROLES.SUPER_ADMIN),
+  AssessmentController.getAssessmentByRangeSmallBusiness
+);
 
 router.post(
   '/assessments',
@@ -62,4 +69,5 @@ router.delete(
   auth(USER_ROLES.SUPER_ADMIN),
   AssessmentController.deleteAssessment
 );
+
 export const SamllBusinessRoute = router;

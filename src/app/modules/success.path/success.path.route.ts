@@ -69,4 +69,11 @@ router.delete(
   SuccessPathController.deleteAssessment
 ); // Delete
 
+// GET /api/assessments/:id/range?value=11
+router.get(
+  '/assessments/:categoryName/range',
+  auth(USER_ROLES.SUPER_ADMIN),
+  SuccessPathController.getAssessmentByRangeController
+);
+
 export const SuccessPathRoutes = router;

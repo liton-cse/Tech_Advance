@@ -41,10 +41,10 @@ const CategorySchema = new Schema<ICategory>({
 
 // Model
 export const CategoryModel: Model<ICategory> = mongoose.model<ICategory>(
-  'Category',
+  'Small_Business_Quiz',
   CategorySchema
 );
 export const AssessmentModel = mongoose.model<IAssessment>(
-  'Assessment',
+  'Samll_Business_Assessment',
   AssessmentSchema
 );

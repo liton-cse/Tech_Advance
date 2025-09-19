@@ -27,6 +27,13 @@ router.delete(
 );
 
 //------------Assessment-----------
+// @ /api/v1/mock/interview/assessments/by-range?value=5
+router.get(
+  '/assessments/by-range',
+  auth(USER_ROLES.SUPER_ADMIN),
+  MockInterviewController.getAssessmentByRangeMockInterview
+);
+
 router.post(
   '/assessments',
   auth(USER_ROLES.SUPER_ADMIN),
@@ -52,4 +59,5 @@ router.delete(
   auth(USER_ROLES.SUPER_ADMIN),
   MockInterviewController.deleteAssessment
 );
+
 export const MockInterviewRoutes = router;

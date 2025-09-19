@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import { StatusCodes } from 'http-status-codes';
@@ -144,12 +144,46 @@ const deleteAssessment = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+//--------Get Assessment base on the range-----
+const getAssessmentByRangeSmallBusiness = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { value } = req.query; // e.g. ?value=11
+    if (!value) {
+      return sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: 'Query param "value" is required',
+      });
+    }
+
+    const assessment = await AssessmentService.getAssessmentByRange(
+      Number(value)
+    );
+
+    sendResponse(res, {
+      success: !!assessment,
+      statusCode: assessment ? StatusCodes.OK : StatusCodes.NOT_FOUND,
+      message: assessment
+        ? 'Assessment retrieved successfully'
+        : 'No assessment found for this value',
+      data: assessment,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const AssessmentController = {
   createAssessment,
   getAllAssessments,
   getAssessmentById,
   updateAssessment,
   deleteAssessment,
+  getAssessmentByRangeSmallBusiness,
 };
 
 // Export all controllers in a single object

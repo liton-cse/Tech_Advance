@@ -97,12 +97,31 @@ const deleteAssessment = async (id: string): Promise<IAssessment | null> => {
   return result;
 };
 
+//---------- Get Assessment by Range-----
+const getAssessmentByRange = async (
+  value: number
+): Promise<IAssessment | null> => {
+  // Assuming range is stored like "10-20"
+  const assessments = await AssessmentModel.find();
+
+  for (const assessment of assessments) {
+    const [min, max] = assessment.range.split('-').map(Number);
+
+    if (value >= min && value <= max) {
+      return assessment;
+    }
+  }
+
+  return null;
+};
+
 export const AssessmentService = {
   createAssessment,
   getAllAssessments,
   getAssessmentById,
   updateAssessment,
   deleteAssessment,
+  getAssessmentByRange,
 };
 
 // Export all service functions in a single object

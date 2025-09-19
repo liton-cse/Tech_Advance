@@ -2,7 +2,11 @@ import {
   AssessmentCategoryModel,
   QuizQuestionModel,
 } from './success.path.model';
-import { IAssessment, IQuizQuestion } from './success.path.interface';
+import {
+  IAssessment,
+  IAssessmentCategory,
+  IQuizQuestion,
+} from './success.path.interface';
 
 // Add question under a category
 const addQuizQuestion = async (
@@ -135,6 +139,26 @@ const deleteAssessment = async (categoryName: string, assessmentId: string) => {
   return assessment;
 };
 
+//-------get assesment base on Number---------
+
+const getAssessmentByRange = async (
+  categoryName: string,
+  value: number
+): Promise<IAssessment | null> => {
+  const category = await AssessmentCategoryModel.findOne({
+    category: categoryName,
+  });
+  if (!category) return null;
+
+  // Find the matching assessment range
+  const matched = category.assessment.find(item => {
+    const [min, max] = item.range.split('-').map(Number);
+    return value >= min && value <= max;
+  });
+
+  return matched ?? null;
+};
+
 // ✅ Export in required format
 export const SuccessPathService = {
   addQuizQuestion,
@@ -147,4 +171,5 @@ export const SuccessPathService = {
   getAssessmentCategoryByName,
   updateAssessment,
   deleteAssessment,
+  getAssessmentByRange,
 };

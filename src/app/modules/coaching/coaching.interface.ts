@@ -15,14 +15,19 @@ export interface ICoachingUser extends Document {
   time: ITimeSlot[];
 }
 
-export interface IDate extends Document {
+export interface ICoachingSlot {
+  value: string;
+  flag: number;
+}
+
+export interface ICoachingDate {
   date: string;
-  slot1: string;
-  slot2: string;
-  slot3: string;
+  slot1: ICoachingSlot;
+  slot2: ICoachingSlot;
+  slot3: ICoachingSlot;
 }
 export interface ICoachingDetails extends Document {
   name: string;
   description: string;
-  details?: Types.DocumentArray<IDate>;
+  details: ICoachingDate[];
 }

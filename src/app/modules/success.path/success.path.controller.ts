@@ -193,6 +193,43 @@ export const deleteAssessment = catchAsync(
   }
 );
 
+//---------get assessment --------
+
+const getAssessmentByRangeController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { value } = req.query; // e.g. ?value=11
+    const { categoryName } = req.params; // categoryId
+
+    if (!value) {
+      return sendResponse(res, {
+        success: false,
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: 'Query param "value" is required',
+      });
+    }
+
+    const assessment = await SuccessPathService.getAssessmentByRange(
+      categoryName,
+      Number(value)
+    );
+
+    sendResponse(res, {
+      success: !!assessment,
+      statusCode: assessment ? StatusCodes.OK : StatusCodes.NOT_FOUND,
+      message: assessment
+        ? 'Assessment retrieved successfully'
+        : 'No assessment found for this value',
+      data: assessment,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const SuccessPathController = {
   addQuizQuestion,
   getAllCategories,
@@ -204,4 +241,5 @@ export const SuccessPathController = {
   getAssessmentCategoryByName,
   updateAssessment,
   deleteAssessment,
+  getAssessmentByRangeController,
 };

@@ -81,6 +81,24 @@ const deleteAssessment = async (id: string) => {
   return await AssessmentModel.findByIdAndDelete(id);
 };
 
+//---------- Get Assessment by Range-----
+const getAssessmentByRange = async (
+  value: number
+): Promise<IAssessment | null> => {
+  // Assuming range is stored like "10-20"
+  const assessments = await AssessmentModel.find();
+
+  for (const assessment of assessments) {
+    const [min, max] = assessment.range.split('-').map(Number);
+
+    if (value >= min && value <= max) {
+      return assessment;
+    }
+  }
+
+  return null;
+};
+
 export const MockInterviewService = {
   createQuizToDB,
   getQuizFromDB,
@@ -92,4 +110,5 @@ export const MockInterviewService = {
   getAssessmentById,
   updateAssessment,
   deleteAssessment,
+  getAssessmentByRange,
 };

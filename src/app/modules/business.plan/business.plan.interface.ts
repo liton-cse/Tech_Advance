@@ -10,3 +10,10 @@ export interface IQuestion {
   questionText: string;
   answer: string;
 }
+
+// Pdf response ....
+export interface IUserResponse extends Document {
+  userId: string;
+  quizAnswers: { question: string; selectedAnswer: string }[];
+  writtenAnswers: { question: string; answer: string }[];
+}
