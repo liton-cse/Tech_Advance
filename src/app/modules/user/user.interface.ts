@@ -10,7 +10,7 @@ export type IUser = {
   location: string;
   image?: string;
   userStatus: 'active' | 'blocked';
-  status: 'active' | 'inactive';
+  status: 'active' | 'delete';
   verified: boolean;
   authentication?: {
     isResetPassword: boolean;

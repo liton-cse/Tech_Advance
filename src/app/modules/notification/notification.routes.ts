@@ -1,12 +1,14 @@
+// routes/notification.route.ts
 import { Router } from 'express';
-import { sendNotification, openNotification } from './notification.controller';
+import { NotificationController } from './notification.controller';
 
 const router = Router();
 
-// Create/send a new notification
-router.post('/', sendNotification);
+router.post('/send', NotificationController.pushNotification);
 
-// Handle click on notification
-router.get('/:id', openNotification);
+router.patch('/read/:notificationId', NotificationController.readNotification);
+
+router.get('/unread/:userId', NotificationController.unreadNotifications);
 
 export const NotificationRoutes = router;
+0;

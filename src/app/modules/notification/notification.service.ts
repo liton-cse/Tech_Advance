@@ -1,26 +1,95 @@
-type Notification = {
-  id: string;
-  title: string;
-  message: string;
-  link: string; // content URL
+// services/notification.service.ts
+import admin from 'firebase-admin';
+import {
+  NotificationModel,
+  NotificationHistoryModel,
+} from './notification.model';
+import {
+  INotification,
+  INotificationHistory,
+  SendNotificationResult,
+} from './notification.interface';
+
+// Save or update FCM token
+const saveFCMToken = async (
+  userId: string,
+  username: string,
+  email: string,
+  fcmToken: string
+): Promise<INotification> => {
+  const existing = await NotificationModel.findOne({ fcmToken });
+  if (existing) {
+    return existing;
+  }
+  const newNotification = new NotificationModel({
+    userId,
+    username,
+    email,
+    fcmToken,
+    lastActive: new Date(),
+  });
+
+  return await newNotification.save();
 };
 
-let notifications: Notification[] = [];
+// Send notification to all devices of a user
+const sendNotification = async (
+  title: string,
+  description: string
+): Promise<SendNotificationResult> => {
+  const devices = await NotificationModel.find();
+  const tokens: string[] = devices.map((d: any) => d.fcmToken);
 
-export const createNotification = (headers: any, body: any): Notification => {
-  const id = Date.now().toString();
+  if (tokens.length === 0) {
+    return { success: false, message: 'No devices found' };
+  }
 
-  const notification: Notification = {
-    id,
-    title: body.title || 'Default Title',
-    message: body.message || 'Default Message',
-    link: body.link || 'https://example.com',
+  const message: admin.messaging.MulticastMessage = {
+    notification: { title, body: description },
+    tokens,
   };
 
-  notifications.push(notification);
-  return notification;
+  // TypeScript-safe cast
+  const messaging = admin.messaging() as admin.messaging.Messaging & {
+    sendMulticast: (
+      msg: admin.messaging.MulticastMessage
+    ) => Promise<admin.messaging.BatchResponse>;
+  };
+
+  const response = await messaging.sendMulticast(message);
+
+  // Save notification history
+  const historyPromises = tokens.map((token: string) =>
+    NotificationHistoryModel.create({
+      title,
+      description,
+      fcmToken: token,
+    } as INotificationHistory)
+  );
+
+  await Promise.all(historyPromises);
+
+  return { success: true, response };
 };
 
-export const getNotificationById = (id: string): Notification | undefined => {
-  return notifications.find(n => n.id === id);
+//Mark the read and unread notification...
+const markNotificationAsRead = async (notificationId: string) => {
+  return NotificationHistoryModel.findByIdAndUpdate(
+    notificationId,
+    { read: true },
+    { new: true }
+  );
+};
+//
+const getUnreadNotifications = async (userId: string) => {
+  return NotificationHistoryModel.find({ userId, read: false }).sort({
+    sentAt: -1,
+  });
+};
+
+export const NotificationService = {
+  saveFCMToken,
+  sendNotification,
+  markNotificationAsRead,
+  getUnreadNotifications,
 };
