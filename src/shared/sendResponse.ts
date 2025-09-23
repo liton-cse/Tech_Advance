@@ -11,6 +11,7 @@ type IData<T> = {
     total: number;
   };
   data?: T;
+  role?: string;
 };
 
 const sendResponse = <T>(res: Response, data: IData<T>) => {
@@ -19,6 +20,7 @@ const sendResponse = <T>(res: Response, data: IData<T>) => {
     message: data.message,
     pagination: data.pagination,
     data: data.data,
+    role: data.role,
   };
   res.status(data.statusCode).json(resData);
 };

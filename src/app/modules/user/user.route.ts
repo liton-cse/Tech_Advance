@@ -5,6 +5,8 @@ import fileUploadHandler from '../../middlewares/fileUploadHandler';
 import validateRequest from '../../middlewares/validateRequest';
 import { UserController } from './user.controller';
 import { UserValidation } from './user.validation';
+import { AuthValidation } from '../auth/auth.validation';
+import { AuthController } from '../auth/auth.controller';
 const router = express.Router();
 
 router
@@ -26,6 +28,12 @@ router
     }
   );
 
+router.post(
+  '/login',
+  validateRequest(AuthValidation.createLoginZodSchema),
+  AuthController.loginUser
+);
+
 router
   .route('/')
   .post(
@@ -42,7 +50,9 @@ router
   .route('/filter')
   .get(auth(USER_ROLES.SUPER_ADMIN), UserController.filterUsers);
 
-router.route('/all').get(UserController.getAllUserProfile);
+router
+  .route('/all')
+  .get(auth(USER_ROLES.SUPER_ADMIN), UserController.getAllUserProfile);
 
 router.patch(
   '/block/:id',

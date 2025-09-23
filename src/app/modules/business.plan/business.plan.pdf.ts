@@ -82,7 +82,7 @@ export const generatePdf = catchAsync(
           align: 'center',
         });
 
-      doc.text(`User ID: ${user?.name}`, { align: 'center' });
+      doc.text(`User: ${user?.name}`, { align: 'center' });
 
       // Add a horizontal line
       doc
@@ -93,7 +93,7 @@ export const generatePdf = catchAsync(
         .stroke();
 
       // Move cursor below the line
-      doc.y = 160; // set Y position directly
+      doc.y = 160;
 
       // Quiz Responses Section
       doc

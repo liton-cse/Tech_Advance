@@ -8,6 +8,7 @@ import {
   getMultipleFilesPath,
   getSingleFilePath,
 } from '../../../shared/getFilePath';
+import { NotificationService } from '../notification/notification.service';
 
 // @Group Controller
 // @apiend point: api/v1/groups
@@ -53,6 +54,18 @@ const createPost = catchAsync(
       { ...req.body, image, group: groupId },
       req.user.id
     );
+
+    //for creating a push notification data.
+    const user = req.user;
+    const title = `Recently ${user.name} created the post.`;
+    const description = req.body.description;
+    const contentId = groupId;
+    await NotificationService.sendCustomNotification(
+      title,
+      description,
+      contentId
+    );
+
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.CREATED,
@@ -93,6 +106,16 @@ const createComment = catchAsync(
       postId,
       req.user.id
     );
+    const user = req.user;
+    const title = `${user.name} commented on your post`;
+    const description = req.body.text;
+    const contentId = comment.id;
+    await NotificationService.sendCustomNotification(
+      title,
+      description,
+      groupId,
+      contentId
+    );
 
     sendResponse(res, {
       success: true,
@@ -115,7 +138,15 @@ const replyToComment = catchAsync(
       req.user.id,
       { ...req.body, image }
     );
-
+    const user = req.user;
+    const title = `${user.name} mention you`;
+    const description = req.body.text;
+    const contentId = updatedComment.id;
+    await NotificationService.sendCustomNotification(
+      title,
+      description,
+      contentId
+    );
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.CREATED,
@@ -176,7 +207,7 @@ const removeComment = catchAsync(async (req: Request, res: Response) => {
 // @Edit reply
 // @apiend point:api/v1/groups/comments/:commentId/replies/:replyId
 // @method:put
-export const updateReply = catchAsync(async (req: Request, res: Response) => {
+const updateReply = catchAsync(async (req: Request, res: Response) => {
   let image = getMultipleFilesPath(req.files, 'image');
   const updatedComment = await CommunityService.editReply(
     req.params.commentId,
@@ -195,7 +226,7 @@ export const updateReply = catchAsync(async (req: Request, res: Response) => {
 // @Delete reply
 // @apiend point:api/v1/groups/comments/:commentId/replies/:replyId
 // @method:delete
-export const removeReply = catchAsync(async (req: Request, res: Response) => {
+const removeReply = catchAsync(async (req: Request, res: Response) => {
   const deletedComment = await CommunityService.deleteReply(
     req.params.commentId,
     req.params.replyId,

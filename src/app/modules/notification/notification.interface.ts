@@ -13,7 +13,8 @@ export interface INotificationHistory extends Document {
   title: string;
   description: string;
   fcmToken?: string;
-  contentId?: Types.ObjectId;
+  groupId?: Types.ObjectId;
+  contentId?: Types.ObjectId | string;
   contentUrl?: string;
   read?: boolean;
   sentAt?: Date;
@@ -21,5 +22,5 @@ export interface INotificationHistory extends Document {
 export interface SendNotificationResult {
   success: boolean;
   message?: string;
-  response?: admin.messaging.BatchResponse;
+  response?: admin.messaging.BatchResponse[];
 }

@@ -5,6 +5,7 @@ import sendResponse from '../../../shared/sendResponse';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from '../../../errors/ApiError';
 import mongoose from 'mongoose';
+import { NotificationService } from '../notification/notification.service';
 
 // Create
 // @apiend point:api/v1/coaching
@@ -116,6 +117,12 @@ const updateSlotStatusController = catchAsync(
       });
     }
     const result = await CoachingService.updateSlotStatus(id, range, action);
+    const title =
+      result.status == 'APPROVED'
+        ? `${result?.name} is ${result?.status}`
+        : `${result?.name} is ${result?.status}`;
+    const description = `The User is ${result.status} by admin!`;
+    await NotificationService.sendCustomNotification(title, description);
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.OK,
@@ -172,6 +179,9 @@ export const createCoach = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { name, description } = req.body;
     const coach = await CoachingService.createCoach(name, description);
+
+    const title = `${name} is added as new coach`;
+    await NotificationService.sendCustomNotification(title, description);
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.CREATED,

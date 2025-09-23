@@ -87,6 +87,7 @@ const updateSlotStatus = async (
   await user.save();
   return user;
 };
+
 // @get total coaching user.
 const getTotalCoachingUsers = async () => {
   return await CoachingUserModel.countDocuments();

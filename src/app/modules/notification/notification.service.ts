@@ -11,7 +11,8 @@ import {
 } from './notification.interface';
 import { Types } from 'mongoose';
 
-// Save or update FCM token
+// Save or update FCM token when user login.
+
 const saveFCMToken = async (
   userId: string,
   username: string,
@@ -34,47 +35,77 @@ const saveFCMToken = async (
 };
 
 // Send notification to all devices of a user
+const CHUNK_SIZE = 200; // FCM max batch size
+
 const sendCustomNotification = async (
   title: string,
   description: string,
+  groupId?: Types.ObjectId,
   contentId?: Types.ObjectId,
   contentUrl?: string
 ): Promise<SendNotificationResult> => {
   const devices = await NotificationModel.find();
-  const tokens: string[] = devices.map((d: any) => d.fcmToken);
+  const tokens: string[] = devices.map((d: any) => d.fcmToken).filter(Boolean);
 
   if (tokens.length === 0) {
     return { success: false, message: 'No devices found' };
   }
 
-  const message: admin.messaging.MulticastMessage = {
-    notification: { title, body: description },
-    tokens,
-  };
+  const messaging = admin.messaging();
 
-  // TypeScript-safe cast
-  const messaging = admin.messaging() as admin.messaging.Messaging & {
-    sendMulticast: (
-      msg: admin.messaging.MulticastMessage
-    ) => Promise<admin.messaging.BatchResponse>;
-  };
+  // Split tokens into batches of 200
+  const batches: string[][] = [];
+  for (let i = 0; i < tokens.length; i += CHUNK_SIZE) {
+    batches.push(tokens.slice(i, i + CHUNK_SIZE));
+  }
 
-  const response = await messaging.sendMulticast(message);
+  // Process batches in parallel
+  const batchResults = await Promise.all(
+    batches.map(async batch => {
+      const message: admin.messaging.MulticastMessage = {
+        notification: { title, body: description },
+        tokens: batch,
+      };
+      const messaging = admin.messaging() as admin.messaging.Messaging & {
+        sendMulticast: (
+          message: admin.messaging.MulticastMessage
+        ) => Promise<admin.messaging.BatchResponse>;
+      };
+      const response = await messaging.sendMulticast(message);
 
-  // Save notification history
-  const historyPromises = tokens.map((token: string) =>
-    NotificationHistoryModel.create({
-      title,
-      description,
-      fcmToken: token,
-      contentId,
-      contentUrl,
-    } as INotificationHistory)
+      // Handle failed tokens
+      const failedTokens: string[] = [];
+      response.responses.forEach(
+        (res: admin.messaging.SendResponse, idx: number) => {
+          if (!res.success) {
+            failedTokens.push(batch[idx]);
+          }
+        }
+      );
+
+      // Remove invalid tokens from DB
+      if (failedTokens.length > 0) {
+        await NotificationModel.deleteMany({ fcmToken: { $in: failedTokens } });
+      }
+
+      // Save notification history
+      const historyPromises = batch.map(token =>
+        NotificationHistoryModel.create({
+          title,
+          description,
+          fcmToken: token,
+          groupId,
+          contentId,
+          contentUrl,
+        } as INotificationHistory)
+      );
+      await Promise.all(historyPromises);
+
+      return response;
+    })
   );
 
-  await Promise.all(historyPromises);
-
-  return { success: true, response };
+  return { success: true, response: batchResults };
 };
 
 //Mark the read and unread notification...

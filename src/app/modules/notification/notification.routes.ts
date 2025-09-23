@@ -11,4 +11,3 @@ router.patch('/read/:notificationId', NotificationController.readNotification);
 router.get('/unread/:userId', NotificationController.unreadNotifications);
 
 export const NotificationRoutes = router;
-0;

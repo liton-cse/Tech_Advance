@@ -42,18 +42,11 @@ const loginUserFromDB = async (payload: ILoginData) => {
     );
   }
 
-  // 2️⃣ Save FCM token if provided
-  if (fcmToken && isExistUser.role !== 'SUPER_ADMIN') {
-    await NotificationService.saveFCMToken(
-      isExistUser._id.toString(),
-      isExistUser.name,
-      isExistUser.email,
-      fcmToken
-    );
-  }
-
   //check match password
-  if (password && !User.isMatchPassword(password, isExistUser.password)) {
+  if (
+    password &&
+    !(await User.isMatchPassword(password, isExistUser.password))
+  ) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Password is incorrect!');
   }
 
@@ -63,8 +56,17 @@ const loginUserFromDB = async (payload: ILoginData) => {
     config.jwt.jwt_secret as Secret,
     config.jwt.jwt_expire_in as string
   );
-
-  return { createToken };
+  // 2️⃣ Save FCM token if provided
+  if (fcmToken && isExistUser.role !== 'SUPER_ADMIN') {
+    await NotificationService.saveFCMToken(
+      isExistUser._id.toString(),
+      isExistUser.name,
+      isExistUser.email,
+      fcmToken
+    );
+  }
+  const role = isExistUser.role;
+  return { createToken, role };
 };
 
 //forget password

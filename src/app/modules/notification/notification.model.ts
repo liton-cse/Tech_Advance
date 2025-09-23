@@ -15,6 +15,7 @@ const notificationHistorySchema = new Schema<INotificationHistory>({
   title: { type: String, required: true },
   description: { type: String, required: true },
   fcmToken: { type: String },
+  groupId: { type: Schema.Types.ObjectId, ref: 'Group', required: false },
   contentId: { type: Schema.Types.ObjectId, ref: 'Video', required: false },
   contentUrl: { type: String },
   read: { type: Boolean, default: false },
