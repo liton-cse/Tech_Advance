@@ -9,6 +9,7 @@ import {
   INotificationHistory,
   SendNotificationResult,
 } from './notification.interface';
+import { Types } from 'mongoose';
 
 // Save or update FCM token
 const saveFCMToken = async (
@@ -33,9 +34,11 @@ const saveFCMToken = async (
 };
 
 // Send notification to all devices of a user
-const sendNotification = async (
+const sendCustomNotification = async (
   title: string,
-  description: string
+  description: string,
+  contentId?: Types.ObjectId,
+  contentUrl?: string
 ): Promise<SendNotificationResult> => {
   const devices = await NotificationModel.find();
   const tokens: string[] = devices.map((d: any) => d.fcmToken);
@@ -64,6 +67,8 @@ const sendNotification = async (
       title,
       description,
       fcmToken: token,
+      contentId,
+      contentUrl,
     } as INotificationHistory)
   );
 
@@ -80,7 +85,7 @@ const markNotificationAsRead = async (notificationId: string) => {
     { new: true }
   );
 };
-//
+//get unmark message from notification...
 const getUnreadNotifications = async (userId: string) => {
   return NotificationHistoryModel.find({ userId, read: false }).sort({
     sentAt: -1,
@@ -89,7 +94,7 @@ const getUnreadNotifications = async (userId: string) => {
 
 export const NotificationService = {
   saveFCMToken,
-  sendNotification,
+  sendCustomNotification,
   markNotificationAsRead,
   getUnreadNotifications,
 };

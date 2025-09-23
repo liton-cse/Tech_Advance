@@ -50,7 +50,7 @@ const pushNotification = catchAsync(
         });
       }
 
-      const result = await NotificationService.sendNotification(
+      const result = await NotificationService.sendCustomNotification(
         title,
         description
       );

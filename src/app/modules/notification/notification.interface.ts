@@ -13,6 +13,8 @@ export interface INotificationHistory extends Document {
   title: string;
   description: string;
   fcmToken?: string;
+  contentId?: Types.ObjectId;
+  contentUrl?: string;
   read?: boolean;
   sentAt?: Date;
 }

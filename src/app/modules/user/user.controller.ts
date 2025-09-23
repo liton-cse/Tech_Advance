@@ -108,6 +108,7 @@ const searchUsers = catchAsync(
     });
   }
 );
+
 // @API Endpoint: api/v1/user/filter
 // @Method: GET
 const filterUsers = catchAsync(
@@ -140,6 +141,7 @@ const blockUser = catchAsync(
     });
   }
 );
+
 // @apiend point:api/v1/user/unblock/:id
 // @method:patch
 const unblockUser = catchAsync(

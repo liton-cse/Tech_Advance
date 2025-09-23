@@ -4,6 +4,7 @@ import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import { VideoPlaylistService } from './videos.service';
 import { IPlaylist, IVideo } from './videos.interface';
+import { NotificationService } from '../notification/notification.service';
 
 // CREATE video
 const createVideo = catchAsync(
@@ -35,6 +36,13 @@ const createVideo = catchAsync(
     }
 
     const result = await VideoPlaylistService.addVideo(payload);
+    // Notify all users
+    await NotificationService.sendCustomNotification(
+      category,
+      title,
+      result._id,
+      url
+    );
 
     sendResponse(res, {
       success: true,
