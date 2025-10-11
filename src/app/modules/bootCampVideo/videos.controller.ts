@@ -176,16 +176,27 @@ const deletePlaylist = catchAsync(async (req: Request, res: Response) => {
 });
 
 const addVideoToPlaylist = catchAsync(async (req: Request, res: Response) => {
-  const { playlistId, videoId } = req.params;
+  const { playlistId } = req.params;
+  const { videos } = req.body; // expecting an array of strings
+
+  if (!Array.isArray(videos) || videos.length === 0) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: StatusCodes.BAD_REQUEST,
+      message: 'videoIds must be a non-empty array',
+    });
+  }
+
   const result = await VideoPlaylistService.addVideoToPlaylist(
     playlistId,
-    videoId
+    videos
   );
+
   sendResponse(res, {
     success: true,
     statusCode: result ? StatusCodes.OK : StatusCodes.NOT_FOUND,
     message: result
-      ? 'Video added to playlist successfully'
+      ? 'Videos added to playlist successfully'
       : 'Playlist not found',
     data: result,
   });

@@ -21,7 +21,7 @@ router.get(
   CoachingControllers.getAllUsersSearchController
 );
 router.get(
-  '/user',
+  '/users',
   auth(USER_ROLES.SUPER_ADMIN),
   CoachingControllers.getUsersController
 );

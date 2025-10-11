@@ -31,7 +31,7 @@ const getMonthlyApplicants = async () => {
 
     const formatted = result.map(item => ({
       month: monthNames[item._id.month - 1],
-      totalApplicants: item.totalApplicants,
+      value: item.totalApplicants,
     }));
 
     return formatted;

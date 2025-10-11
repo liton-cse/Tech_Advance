@@ -69,6 +69,20 @@ const getAllUsersFromDB = async (
   };
 };
 
+const updateUserNameInDB = async (userId: string, newName: string) => {
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { name: newName },
+    { new: true }
+  );
+
+  if (!updatedUser) {
+    throw new Error('User not found');
+  }
+
+  return updatedUser;
+};
+
 const updateProfileToDB = async (
   user: JwtPayload,
   payload: Partial<IUser>
@@ -131,4 +145,5 @@ export const UserService = {
   blockUser,
   unblockUser,
   getBlockedUsers,
+  updateUserNameInDB,
 };

@@ -16,10 +16,6 @@ const QuestionSchema = new Schema<IQuestion>({
   questionText: { type: String, required: true },
   answers: {
     type: [AnswerSchema],
-    validate: [
-      (val: any[]) => val.length === 3,
-      'Each question must have exactly 3 answers.',
-    ],
   },
 });
 

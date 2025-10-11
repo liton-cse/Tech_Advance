@@ -65,8 +65,8 @@ router.delete(
 
 // Add video to playlist
 router.post(
-  '/playlists/:playlistId/videos/:videoId',
-  auth(USER_ROLES.SUPER_ADMIN),
+  '/playlists/:playlistId/videos',
+  // auth(USER_ROLES.SUPER_ADMIN),
   VideoController.addVideoToPlaylist
 );
 

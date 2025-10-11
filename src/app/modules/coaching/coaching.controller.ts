@@ -42,7 +42,7 @@ const getAllUsersSearchController = catchAsync(
 );
 
 // Read all coaching user
-// @apiend point:api/v1/coaching
+// @apiend point:api/v1/coaching/users
 // @method:get
 const getUsersController = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -50,14 +50,14 @@ const getUsersController = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.OK,
-      message: 'User fetched successfully',
+      message: 'Coaching user fetched successfully',
       data: result,
     });
   }
 );
 
 // Read coaching user by Id..
-// @apiend point:api/v1/coaching
+// @apiend point:api/v1/coaching/:id
 // @method:get
 const getUsersControllerById = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {

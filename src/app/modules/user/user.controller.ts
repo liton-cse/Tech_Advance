@@ -56,6 +56,24 @@ const getAllUserProfile = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// @API Endpoint: api/v1/user/:id/name
+// @Method: PATCH
+const updateUserName = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const { name } = req.body;
+
+    const updatedUser = await UserService.updateUserNameInDB(id, name);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'User name updated successfully',
+      data: updatedUser,
+    });
+  }
+);
+
 // @update profile
 // @API Endpoint: api/v1/user/:id
 // @Method: PUT
@@ -180,4 +198,5 @@ export const UserController = {
   blockUser,
   unblockUser,
   getBlockedUsers,
+  updateUserName,
 };

@@ -1,5 +1,6 @@
 import { VideoModel, PlaylistModel } from './videos.model';
 import { IVideo, IPlaylist } from './videos.interface';
+import { Types } from 'mongoose';
 
 // ----------------- VIDEO -----------------
 const addVideo = async (videoData: IVideo) => {
@@ -46,13 +47,15 @@ const deletePlaylist = async (id: string) => {
 };
 
 // Add a video to a playlist
-const addVideoToPlaylist = async (playlistId: string, videoId: string) => {
-  const playlist = await PlaylistModel.findById(playlistId);
-  if (!playlist) return null;
+const addVideoToPlaylist = async (playlistId: string, videos: string[]) => {
+  const objectIds = videos.map(id => new Types.ObjectId(id));
 
-  playlist?.videos?.push(videoId as any);
-  await playlist.save();
-  return playlist.populate('videos');
+  // Find playlist and push videos
+  const playlist = await PlaylistModel.findByIdAndUpdate(playlistId, {
+    $addToSet: { videos: { $each: objectIds } },
+  });
+
+  return playlist;
 };
 
 // ----------------- EXPORT SERVICE -----------------

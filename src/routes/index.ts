@@ -10,6 +10,7 @@ import { DashboardRoute } from '../app/modules/dashboard/dashboard.route';
 import { SamllBusinessRoute } from '../app/modules/small.business/small.business.route';
 import { BusinessPlanRoutes } from '../app/modules/business.plan/business.plan.route';
 import { SuccessPathRoutes } from '../app/modules/success.path/success.path.route';
+import { BootCampCourses } from '../app/modules/bootCamp/bootcamp.route';
 
 const router = express.Router();
 
@@ -45,6 +46,10 @@ const apiRoutes = [
   {
     path: '/bootcamp',
     route: BootcampRouter,
+  },
+  {
+    path: '/bootcamp/courses',
+    route: BootCampCourses,
   },
   {
     path: '/coaching',

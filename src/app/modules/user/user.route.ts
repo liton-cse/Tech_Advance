@@ -50,6 +50,12 @@ router
   .route('/filter')
   .get(auth(USER_ROLES.SUPER_ADMIN), UserController.filterUsers);
 
+router.patch(
+  '/:id/name',
+  auth(USER_ROLES.SUPER_ADMIN),
+  UserController.updateUserName
+);
+
 router
   .route('/all')
   .get(auth(USER_ROLES.SUPER_ADMIN), UserController.getAllUserProfile);
