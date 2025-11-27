@@ -61,19 +61,13 @@ const deleteQuestion = async (id: string): Promise<IQuestion | null> => {
 };
 
 //Submitted data for generating pdf....
-const submittedDataforPdf = async ({
-  userId,
-  quizAnswers,
-  writtenAnswers,
-}: IUserResponse): Promise<IUserResponse> => {
+const submittedDataforPdf = async (
+  bodyData: IUserResponse
+): Promise<IUserResponse> => {
   try {
     // Save user responses
-    const response = await UserResponseModel.create({
-      userId,
-      quizAnswers,
-      writtenAnswers,
-    });
-
+    console.log(bodyData);
+    const response = await UserResponseModel.create(bodyData);
     return response;
   } catch (error) {
     throw new Error('Error saving responses: ' + error);

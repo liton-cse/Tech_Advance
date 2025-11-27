@@ -8,10 +8,14 @@ const router = express.Router();
 
 // ====== COURSES ======
 router.post('/', auth(USER_ROLES.SUPER_ADMIN), CourseController.createCourse);
-router.get('/', auth(USER_ROLES.SUPER_ADMIN), CourseController.getAllCourses);
+router.get(
+  '/',
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
+  CourseController.getAllCourses
+);
 router.get(
   '/:courseId',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   CourseController.getCourseById
 );
 router.patch(
@@ -31,6 +35,12 @@ router.post(
   auth(USER_ROLES.SUPER_ADMIN),
   CourseController.addModuleToCourse
 );
+router.get(
+  '/:courseId/modules',
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
+  CourseController.getModuleFromCourse
+);
+
 router.patch(
   '/:courseId/modules/:moduleId',
   auth(USER_ROLES.SUPER_ADMIN),
@@ -49,6 +59,19 @@ router.post(
   fileUploadHandler(),
   CourseController.addContentToModule
 );
+router.post(
+  '/:courseId/modules/:moduleId/videos',
+  auth(USER_ROLES.SUPER_ADMIN),
+  fileUploadHandler(),
+  CourseController.addVideoToModule
+);
+
+router.get(
+  '/:courseId/modules/:moduleId/contents',
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
+  CourseController.getContentFromModule
+);
+
 router.patch(
   '/:courseId/modules/:moduleId/contents/:contentId',
   auth(USER_ROLES.SUPER_ADMIN),

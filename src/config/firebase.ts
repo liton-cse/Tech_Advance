@@ -1,14 +1,8 @@
 import admin from 'firebase-admin';
-import path from 'path';
-
-// Service account file from Firebase Console
-const serviceAccount = require(path.join(
-  __dirname,
-  '../../serviceAccountKey.json'
-));
+import serviceAccount from '../config/serviceAccountKey.json'; // JSON import works with resolveJsonModule
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
 });
 
 export default admin;

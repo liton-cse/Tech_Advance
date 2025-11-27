@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post(
   '/user',
-  auth(USER_ROLES.USER),
+  auth(USER_ROLES.USER, USER_ROLES.USER),
   CoachingControllers.createUserController
 );
 router.put(
@@ -80,19 +80,19 @@ router.delete(
 );
 router.get(
   '/coach',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   CoachingControllers.getAllCoaches
 );
 router.get(
   '/coach/:id',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   CoachingControllers.getCoachById
 );
 
 // Date & Slot Management
 router.post(
   '/coach/:id/date',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   CoachingControllers.addDate
 ); // add date (auto slots)
 router.put(
@@ -112,7 +112,7 @@ router.delete(
 ); // delete slot
 router.get(
   '/coach/:id/slots', //coachId=id
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   CoachingControllers.getSlotsByDate
 ); // get slots for a date
 

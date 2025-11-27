@@ -21,9 +21,14 @@ import { NotificationService } from '../notification/notification.service';
 //login
 const loginUserFromDB = async (payload: ILoginData) => {
   const { email, password, fcmToken } = payload;
+
   const isExistUser = await User.findOne({ email }).select('+password');
   if (!isExistUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
+  }
+
+  if (!fcmToken) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'FCM token Needed!');
   }
 
   //check verified and status
@@ -56,8 +61,10 @@ const loginUserFromDB = async (payload: ILoginData) => {
     config.jwt.jwt_secret as Secret,
     config.jwt.jwt_expire_in as string
   );
+  console.log('fcm token', fcmToken);
   // 2️⃣ Save FCM token if provided
   if (fcmToken && isExistUser.role !== 'SUPER_ADMIN') {
+    console.log('NOtification running');
     await NotificationService.saveFCMToken(
       isExistUser._id.toString(),
       isExistUser.name,
@@ -65,6 +72,7 @@ const loginUserFromDB = async (payload: ILoginData) => {
       fcmToken
     );
   }
+
   const role = isExistUser.role;
   return { createToken, role };
 };

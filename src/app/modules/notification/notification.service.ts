@@ -1,5 +1,5 @@
 // services/notification.service.ts
-import admin from 'firebase-admin';
+import admin from '../../../config/firebase';
 import {
   NotificationModel,
   NotificationHistoryModel,
@@ -19,6 +19,7 @@ const saveFCMToken = async (
   email: string,
   fcmToken: string
 ): Promise<INotification> => {
+  console.log('not', fcmToken);
   const existing = await NotificationModel.findOne({ fcmToken });
   if (existing) {
     return existing;
@@ -35,7 +36,7 @@ const saveFCMToken = async (
 };
 
 // Send notification to all devices of a user
-const CHUNK_SIZE = 200; // FCM max batch size
+const CHUNK_SIZE = 500; // FCM max batch size
 
 const sendCustomNotification = async (
   title: string,
@@ -51,55 +52,45 @@ const sendCustomNotification = async (
     return { success: false, message: 'No devices found' };
   }
 
-  const messaging = admin.messaging();
-
-  // Split tokens into batches of 200
+  // Split into 200-token batches
   const batches: string[][] = [];
   for (let i = 0; i < tokens.length; i += CHUNK_SIZE) {
     batches.push(tokens.slice(i, i + CHUNK_SIZE));
   }
 
-  // Process batches in parallel
   const batchResults = await Promise.all(
     batches.map(async batch => {
       const message: admin.messaging.MulticastMessage = {
         notification: { title, body: description },
         tokens: batch,
       };
-      const messaging = admin.messaging() as admin.messaging.Messaging & {
-        sendMulticast: (
-          message: admin.messaging.MulticastMessage
-        ) => Promise<admin.messaging.BatchResponse>;
-      };
-      const response = await messaging.sendMulticast(message);
 
-      // Handle failed tokens
-      const failedTokens: string[] = [];
-      response.responses.forEach(
-        (res: admin.messaging.SendResponse, idx: number) => {
-          if (!res.success) {
-            failedTokens.push(batch[idx]);
-          }
-        }
+      // Modern API
+      const response = await admin.messaging().sendEachForMulticast(message);
+
+      // Filter invalid tokens
+      // const failedTokens = batch.filter(
+      //   (_, idx) => !response.responses[idx].success
+      // );
+
+      // // Remove invalid tokens from DB
+      // if (failedTokens.length > 0) {
+      //   await NotificationModel.deleteMany({ fcmToken: { $in: failedTokens } });
+      // }
+
+      // Save history
+      await Promise.all(
+        batch.map(token =>
+          NotificationHistoryModel.create({
+            title,
+            description,
+            fcmToken: token,
+            groupId,
+            contentId,
+            contentUrl,
+          })
+        )
       );
-
-      // Remove invalid tokens from DB
-      if (failedTokens.length > 0) {
-        await NotificationModel.deleteMany({ fcmToken: { $in: failedTokens } });
-      }
-
-      // Save notification history
-      const historyPromises = batch.map(token =>
-        NotificationHistoryModel.create({
-          title,
-          description,
-          fcmToken: token,
-          groupId,
-          contentId,
-          contentUrl,
-        } as INotificationHistory)
-      );
-      await Promise.all(historyPromises);
 
       return response;
     })
@@ -123,9 +114,14 @@ const getUnreadNotifications = async (userId: string) => {
   });
 };
 
+const getNotification = async () => {
+  return await NotificationHistoryModel.find().sort({ createdAt: -1 });
+};
+
 export const NotificationService = {
   saveFCMToken,
   sendCustomNotification,
   markNotificationAsRead,
   getUnreadNotifications,
+  getNotification,
 };

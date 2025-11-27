@@ -1,5 +1,11 @@
 import { CoursesModel } from './bootcamp.model';
-import { IContent, ICourses, PaginatedCourses } from './bootcamp.interface';
+import {
+  IContent,
+  ICourses,
+  IModule,
+  PaginatedCourses,
+} from './bootcamp.interface';
+import mongoose from 'mongoose';
 
 // =================== COURSE SERVICES ===================
 
@@ -88,6 +94,44 @@ const addModuleToCourse = async (courseId: string, moduleData: any) => {
 };
 
 /**
+ * get module from a course.
+ * @param courseId - The course ID.
+ * @returns give me all module from a course.
+ */
+const getModuleFromCourse = async (courseId: string) => {
+  try {
+    const course = await CoursesModel.findById(courseId).select('modules');
+
+    if (!course) {
+      throw new Error('Course not found');
+    }
+
+    const modulesWithCounts = course.modules.map((module: IModule) => {
+      const contents = module.contents || [];
+
+      // ✅ Declare accumulator with correct index signature
+      const typeCounts: Record<string, number> = {};
+
+      contents.forEach(content => {
+        typeCounts[content.type] = (typeCounts[content.type] || 0) + 1;
+      });
+
+      return {
+        _id: module._id,
+        name: module.name,
+        // contents,
+        typeCounts, // e.g. { pdf: 1, video: 2 }
+      };
+    });
+
+    return modulesWithCounts;
+  } catch (error) {
+    console.error('Error fetching modules:', error);
+    throw new Error('Failed to get modules with content counts');
+  }
+};
+
+/**
  * Update a module's name inside a course.
  * @param courseId - The course ID.
  * @param moduleId - The module ID.
@@ -139,6 +183,27 @@ const addContentToModule = async (
     { $push: { 'modules.$.contents': contentData } },
     { new: true }
   );
+};
+
+/**
+ * Get all content to a specific module in a course.
+ * @param courseId - The course ID.
+ * @param moduleId - The module ID.
+ * @returns get all content to a specific module in a course.
+ */
+const getContentFromModule = async (courseId: string, moduleId: string) => {
+  try {
+    const result = await CoursesModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(courseId) } },
+      { $unwind: '$modules' },
+      { $match: { 'modules._id': new mongoose.Types.ObjectId(moduleId) } },
+      { $project: { _id: 0, contents: '$modules.contents' } },
+    ]);
+    return result[0]?.contents || [];
+  } catch (error) {
+    console.error('Error fetching module contents:', error);
+    throw new Error('Failed to get module contents');
+  }
 };
 
 /**
@@ -202,4 +267,6 @@ export const CourseService = {
   addContentToModule,
   updateContentTitle,
   deleteContent,
+  getModuleFromCourse,
+  getContentFromModule,
 };

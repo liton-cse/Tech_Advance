@@ -121,9 +121,21 @@ const unreadNotifications = async (
     next(err);
   }
 };
+
+const getAllNotification = catchAsync(async (req: Request, res: Response) => {
+  const result = await NotificationService.getNotification();
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Notification fetch successfully',
+    data: result,
+  });
+});
+
 export const NotificationController = {
   pushNotification,
   saveToken,
   readNotification,
   unreadNotifications,
+  getAllNotification,
 };

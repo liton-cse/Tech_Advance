@@ -15,13 +15,13 @@ router.post(
 
 router.get(
   '/videos',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   VideoController.getAllVideos
 );
 
 router.get(
   '/videos/:id',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   VideoController.getVideo
 );
 router.put(
@@ -44,12 +44,12 @@ router.post(
 );
 router.get(
   '/playlists',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   VideoController.getAllPlaylists
 );
 router.get(
   '/playlists/:id',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   VideoController.getPlaylistById
 );
 router.put(

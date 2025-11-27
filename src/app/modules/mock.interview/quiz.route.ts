@@ -12,7 +12,7 @@ router.post(
 );
 router.get(
   '/quiz',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   MockInterviewController.getQuizzes
 );
 router.put(
@@ -30,7 +30,7 @@ router.delete(
 // @ /api/v1/mock/interview/assessments/by-range?value=5
 router.get(
   '/assessments/by-range',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   MockInterviewController.getAssessmentByRangeMockInterview
 );
 
@@ -41,7 +41,7 @@ router.post(
 );
 router.get(
   '/assessments',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   MockInterviewController.getAllAssessments
 );
 router.get(

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
@@ -122,6 +122,24 @@ export const addModuleToCourse = catchAsync(
 );
 
 /**
+ * @desc    Add a new module to a course
+ * @route   POST /api/courses/:courseId/modules
+ * @access  Public / Admin
+ * @body    { name: string, contents: Array }
+ */
+export const getModuleFromCourse = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await CourseService.getModuleFromCourse(req.params.courseId);
+    sendResponse(res, {
+      success: !!result,
+      statusCode: result ? StatusCodes.OK : StatusCodes.NOT_FOUND,
+      message: result ? 'Module added successfully' : 'Course not found',
+      data: result,
+    });
+  }
+);
+
+/**
  * @desc    Update a module name
  * @route   PATCH /api/courses/:courseId/modules/:moduleId
  * @access  Public / Admin
@@ -224,6 +242,71 @@ export const addContentToModule = catchAsync(
       message: result ? 'Content added successfully' : 'Module not found',
       data: result,
     });
+  }
+);
+
+export const addVideoToModule = catchAsync(
+  async (req: Request, res: Response) => {
+    const { title } = req.body;
+
+    const videoFiles = (req.files as any)?.['media'];
+    if (!videoFiles || videoFiles.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Video file must be provided!',
+      });
+    }
+
+    const payload: IContent = {
+      title: title ?? '',
+      type: 'video' as const,
+      url: videoFiles[0].filename,
+    };
+
+    const result = await CourseService.addContentToModule(
+      req.params.courseId,
+      req.params.moduleId,
+      payload
+    );
+
+    await NotificationService.sendCustomNotification(
+      `${title} was uploaded recently!`,
+      'video'
+    );
+
+    sendResponse(res, {
+      success: !!result,
+      statusCode: result ? 200 : 404,
+      message: result ? 'Video uploaded successfully' : 'Module not found',
+      data: result,
+    });
+  }
+);
+
+/**
+ * @desc    get all content to module from a content (video/pdf)
+ * @route   get /api/courses/:courseId/modules/:moduleId/contents/:contentId
+ * @access  Public / Admin
+ * @body    { title: string }
+ */
+
+export const getContentFromModule = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const contents = await CourseService.getContentFromModule(
+        req.params.courseId,
+        req.params.moduleId
+      );
+      sendResponse(res, {
+        success: !!contents,
+        statusCode: contents ? StatusCodes.OK : StatusCodes.NOT_FOUND,
+        message: contents ? 'Contents fetch successfully' : 'Content not found',
+        data: contents,
+      });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
   }
 );
 

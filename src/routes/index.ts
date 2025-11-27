@@ -11,6 +11,8 @@ import { SamllBusinessRoute } from '../app/modules/small.business/small.business
 import { BusinessPlanRoutes } from '../app/modules/business.plan/business.plan.route';
 import { SuccessPathRoutes } from '../app/modules/success.path/success.path.route';
 import { BootCampCourses } from '../app/modules/bootCamp/bootcamp.route';
+import { FeedBackRoute } from '../app/modules/feedBackAndtermAndCondition/feedbackRoute';
+import { TermsAndConditionRoute } from '../app/modules/feedBackAndtermAndCondition/termsAndConditionRoute';
 
 const router = express.Router();
 
@@ -62,6 +64,14 @@ const apiRoutes = [
   {
     path: '/notification',
     route: NotificationRoutes,
+  },
+  {
+    path: '/feedback',
+    route: FeedBackRoute,
+  },
+  {
+    path: '/terms-condition',
+    route: TermsAndConditionRoute,
   },
 ];
 

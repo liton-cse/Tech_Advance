@@ -16,12 +16,12 @@ router.post(
 );
 router.get(
   '/:categoryName/questions',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   SamllBusinessController.getQuestionsByCategory
 );
 router.get(
   '/:categoryName/questions/:questionId',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   SamllBusinessController.getQuestionById
 );
 router.put(
@@ -40,7 +40,7 @@ router.delete(
 // GET /api/assessments/range?value=11
 router.get(
   '/assessments/by-range',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   AssessmentController.getAssessmentByRangeSmallBusiness
 );
 
@@ -51,7 +51,7 @@ router.post(
 );
 router.get(
   '/assessments',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   AssessmentController.getAllAssessments
 );
 router.get(

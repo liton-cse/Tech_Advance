@@ -10,10 +10,14 @@ import { generatePdf } from './business.plan.pdf';
 const router = Router();
 
 router.post('/quiz', auth(USER_ROLES.SUPER_ADMIN), QuizController.createQuiz);
-router.get('/quiz', auth(USER_ROLES.SUPER_ADMIN), QuizController.getAllQuizs);
+router.get(
+  '/quiz',
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
+  QuizController.getAllQuizs
+);
 router.get(
   '/quiz/:id',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   QuizController.getQuizById
 );
 router.put(
@@ -35,12 +39,12 @@ router.post(
 );
 router.get(
   '/question',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   QuestionController.getAllQuestions
 );
 router.get(
   '/question/:id',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   QuestionController.getQuestionById
 );
 router.put(
@@ -58,12 +62,16 @@ router.delete(
 // POST /api/responses
 router.post(
   '/responses',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   BusinessPlanController.BusinessPlanPdf
 );
 
 // Generate PDF based on submitted answers
 // GET /api/responses/:userId/pdf
-router.get('/responses/:userId/pdf', auth(USER_ROLES.SUPER_ADMIN), generatePdf);
+router.get(
+  '/responses/pdf',
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
+  generatePdf
+);
 
 export const BusinessPlanRoutes = router;

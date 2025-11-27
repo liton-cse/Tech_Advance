@@ -6,7 +6,7 @@ export type IVerifyEmail = {
 export type ILoginData = {
   email: string;
   password: string;
-  fcmToken?: string;
+  fcmToken: string;
 };
 
 export type IAuthResetPassword = {

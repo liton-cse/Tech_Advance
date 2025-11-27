@@ -33,17 +33,19 @@ const QuestionSchema = new Schema<IQuestion>(
 
 const UserResponseSchema = new Schema<IUserResponse>(
   {
-    userId: { type: String, required: true }, // or ObjectId if linked to Users
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User', // Reference to User model
+      required: true,
+    }, // or ObjectId if linked to Users
+    businessName: { type: String, required: true },
+    businessType: { type: String, required: true },
+    mission: { type: String, required: true },
+    vision: { type: String, required: true },
     quizAnswers: [
       {
         question: { type: String, required: true },
         selectedAnswer: { type: String, required: true },
-      },
-    ],
-    writtenAnswers: [
-      {
-        question: { type: String, required: true },
-        answer: { type: String, required: true },
       },
     ],
   },

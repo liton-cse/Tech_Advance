@@ -7,6 +7,7 @@ export interface IContent {
 }
 
 export interface IModule {
+  _id: string;
   name: string;
   contents: IContent[];
 }

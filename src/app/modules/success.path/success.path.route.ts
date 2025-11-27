@@ -15,14 +15,14 @@ router.post(
 // Get all categories
 router.get(
   '/',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   SuccessPathController.getAllCategories
 );
 
 // Get one category by name
 router.get(
   '/:categoryName',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   SuccessPathController.getCategoryByName
 );
 
@@ -55,7 +55,7 @@ router.get(
 ); // Read all
 router.get(
   '/assessments/:categoryName',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   SuccessPathController.getAssessmentCategoryByName
 ); // Read one
 router.put(
@@ -72,7 +72,7 @@ router.delete(
 // GET /api/assessments/:id/range?value=11
 router.get(
   '/assessments/:categoryName/range',
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.USER),
   SuccessPathController.getAssessmentByRangeController
 );
 

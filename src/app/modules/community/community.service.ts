@@ -39,7 +39,7 @@ const createPost = async (
 // @get the post by id.
 const getPostsByGroup = async (groupId: Types.ObjectId) => {
   return await PostModel.find({ group: groupId })
-    .populate('user', 'name')
+    .populate('user', 'name image')
     .populate('group', 'name image')
     .sort({ createdAt: -1 });
 };

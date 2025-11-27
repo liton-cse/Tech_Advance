@@ -134,12 +134,12 @@ const deleteQuestion = catchAsync(async (req: Request, res: Response) => {
 export const BusinessPlanPdf = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const response = await UserResponseService.submittedDataforPdf({
-        userId: (req as any).user.id,
-        quizAnswers: req.body.quizAnswers,
-        writtenAnswers: req.body.writtenAnswers,
-      } as IUserResponse);
-
+      const bodyData = {
+        ...req.body,
+        userId: req.user.id,
+      };
+      const response = await UserResponseService.submittedDataforPdf(bodyData);
+      console.log(bodyData);
       sendResponse(res, {
         success: true,
         statusCode: StatusCodes.OK,
