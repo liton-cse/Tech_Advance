@@ -27,7 +27,7 @@ const loginUserFromDB = async (payload: ILoginData) => {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
 
-  if (!fcmToken) {
+  if (!fcmToken && isExistUser.role !== 'SUPER_ADMIN') {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'FCM token Needed!');
   }
 

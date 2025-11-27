@@ -22,6 +22,12 @@ const notificationHistorySchema = new Schema<INotificationHistory>({
   sentAt: { type: Date, default: Date.now },
 });
 
+// notification are deleted after 3 months
+notificationHistorySchema.index(
+  { sentAt: 1 },
+  { expireAfterSeconds: 3 * 30 * 24 * 60 * 60 }
+);
+
 export const NotificationModel = model('Notification_User', notificationSchema);
 export const NotificationHistoryModel = model(
   'Notification_History',

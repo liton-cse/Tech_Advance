@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import sendResponse from '../../../shared/sendResponse';
 import { StatusCodes } from 'http-status-codes';
 import { NotificationService } from './notification.service';
+
 // Save or update FCM token
 const saveToken = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -40,6 +41,7 @@ const saveToken = catchAsync(
 const pushNotification = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      // const userId = req.user.id;
       const { title, description } = req.body;
 
       if (!title || !description) {
@@ -69,6 +71,7 @@ const pushNotification = catchAsync(
   }
 );
 
+// set the read notification base on the user..
 const readNotification = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -100,13 +103,14 @@ const readNotification = catchAsync(
   }
 );
 
+// get all unread notification for the user..
 const unreadNotifications = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { userId } = req.params;
+    const userId = req.user.id;
 
     const notifications = await NotificationService.getUnreadNotifications(
       userId
@@ -122,20 +126,37 @@ const unreadNotifications = async (
   }
 };
 
-const getAllNotification = catchAsync(async (req: Request, res: Response) => {
-  const result = await NotificationService.getNotification();
-  sendResponse(res, {
-    success: true,
-    statusCode: StatusCodes.OK,
-    message: 'Notification fetch successfully',
-    data: result,
-  });
-});
+// get all notification for the spacefic user...
+const getAllNotificationByUser = catchAsync(
+  async (req: Request, res: Response) => {
+    const userId = req.user.id;
+    const result = await NotificationService.getNotification(userId);
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Notification fetch successfully',
+      data: result,
+    });
+  }
+);
+
+const getAllNotificationByAdmin = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await NotificationService.getNotificationForAdmin();
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Notification fetch successfully',
+      data: result,
+    });
+  }
+);
 
 export const NotificationController = {
   pushNotification,
   saveToken,
   readNotification,
   unreadNotifications,
-  getAllNotification,
+  getAllNotificationByUser,
+  getAllNotificationByAdmin,
 };
