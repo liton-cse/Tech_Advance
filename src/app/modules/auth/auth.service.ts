@@ -61,7 +61,7 @@ const loginUserFromDB = async (payload: ILoginData) => {
     config.jwt.jwt_secret as Secret,
     config.jwt.jwt_expire_in as string
   );
-  console.log('fcm token', fcmToken);
+
   // 2️⃣ Save FCM token if provided
   if (fcmToken && isExistUser.role !== 'SUPER_ADMIN') {
     console.log('NOtification running');
